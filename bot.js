@@ -335,8 +335,9 @@ function searchPlayerHelper(name,msg, index, nameRaids) {
       //if theyre in the roster they raid on this day
       if (response.values[j][0] === name) {
         //should only print one message
-        nameRaids.push(raidDays[index]);
-        console.log(nameRaids[index]);
+        // nameRaids.push(raidDays[index]);
+        // console.log(nameRaids[index]);
+        msg.channel.send(raidDays[index]);
       }
     }
   })
