@@ -1,0 +1,28 @@
+{
+  "name": "raidboss",
+  "version": "1.0.0",
+  "description": "discord bot for organizing clan raids",
+  "main": "bot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/undeadfire/RaidBoss.git"
+  },
+  "keywords": [
+    "raid",
+    "discord",
+    "bot"
+  ],
+  "author": "David Chen",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/undeadfire/RaidBoss/issues"
+  },
+  "homepage": "https://github.com/undeadfire/RaidBoss#readme",
+  "dependencies": {
+    "discord.js": "^11.1.0",
+    "googleapis": "^19.0.0"
+  }
+}
