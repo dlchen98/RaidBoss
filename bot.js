@@ -70,7 +70,7 @@ function btRoster(day, msg) {
       //only print party trait if player has one
       for (var j = 5; j < response.values[i].length; j+=2) {
         if (response.values[i][j] != '') {
-          if (response.values[i][j] == 'Y') {
+          if (j == 7) {
             string += "~Heals ";
           } else {
             string += "~" + response.values[i][j] + " ";
