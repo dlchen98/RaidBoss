@@ -134,8 +134,13 @@ function nightfallMechs(day, msg) {
     }
     //secondary SS people
     string += "-" + response.values[9][0] + "\n";
-    for (var i = 10; i < 13; i++) {
-      string += response.values[i][0] + "  -  " + response.values[i][2] + "\n";
+    //check if people are actually assigned or just anybody works
+    if (response.values[11] == null) {
+      string += "ANYBODY\n";
+    } else {
+      for (var i = 10; i < 13; i++) {
+        string += response.values[i][0] + "  -  " + response.values[i][2] + "\n";
+      }
     }
     //outside tanks
     string += response.values[5][0] + "=====\n";
