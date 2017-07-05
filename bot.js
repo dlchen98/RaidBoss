@@ -34,7 +34,7 @@ var string3;
 //store the range of cells to get
 var sheetRange;
 //possible raid days
-var raidDays = ["Friday", "Saturday", "Sunday"];
+var raidDays = ["Wednesday", "Friday", "Saturday", "Sunday"];
 //boolean to stop certain actions
 var keepGoing;
 
@@ -384,6 +384,9 @@ client.on('message', msg => {
       case "bt3":
         btRaidOptions(args[1], raidDays[2],msg);
         break;
+      case "bt4":
+        btRaidOptions(args[1], raidDays[3],msg);
+        break;
       case "bt":
         if (args[1] == "rosters") {
           btRosterList(raidDays,msg);
@@ -408,7 +411,7 @@ client.on('message', msg => {
       + "Please use \">raid\" before any command.\n\n";
     //Handle BT Raid instructions
     string += "Black Tower/Skybreak Spire - Format: <raid#> <extra argugment>\n"
-      + "\t<raid#>: 'bt1' = Friday, 'bt2' = Saturday, 'bt3' = Sunday\n";
+      + "\t<raid#>: 'bt1' = Wednesday, 'bt2' = Friday, 'bt3' = Saturday, 'bt4' = Sunday\n";
     //arrays to hold individual BT raid commands
     var btArgs = ["roster", "1", "2", "3", "4"];
     var btArgDescriptions = ["list of all raiders\n",
@@ -430,7 +433,7 @@ client.on('message', msg => {
     var btGeneralDescriptions = ["display all BT raid rosters\n"];
 
     //example for people
-    string += "\tex. '>raid bt1 4' => Friday RK Mechs\n"
+    string += "\tex. '>raid bt1 4' => Wednesday RK Mechs\n"
     //miscellaneous commands for all raids or something
     string += "  Misc - Format: bt <extra argument>\n";
     for (var i = 0; i < btGeneralArgs.length; i++) {
