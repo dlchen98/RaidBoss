@@ -64,19 +64,19 @@ function btRoster(day, msg) {
         string2 = "\n" + (i-Math.floor(i/7)) + ". " + response.values[i][0]
           + "-" + response.values[i][3];
         //try to line up spacing for the party traits
-        while (string2.length < 23) string2 += " ";
+        // while (string2.length < 23) string2 += " ";
         string += string2;
       }
       //only print party trait if player has one
-      for (var j = 5; j < response.values[i].length; j+=2) {
-        if (response.values[i][j] != '') {
-          if (j == 7) {
-            string += "~Heals ";
-          } else {
-            string += "~" + response.values[i][j] + " ";
-          }
-        }
-      }
+      // for (var j = 5; j < response.values[i].length; j+=2) {
+      //   if (response.values[i][j] != '') {
+      //     if (j == 7) {
+      //       string += "~Heals ";
+      //     } else {
+      //       string += "~" + response.values[i][j] + " ";
+      //     }
+      //   }
+      // }
     }
     string += "```";
     //print the roster to the channel
