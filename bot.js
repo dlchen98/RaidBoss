@@ -306,27 +306,28 @@ function btRosterList(raidDays,msg) {
 function searchPlayerBT(name, msg) {
   //start the return message
   string = "```" + name + "'s BT raid day(s):\n";
-
-  var nameRaids = [];
+  //column indices for the signup sheet
+  var signUpIndices = ["A", "F", "K", "P"];
+  // var nameRaids = [];
 
   //iterate through all the raid days
   for (var i = 0; i < raidDays.length; i++) {
     //one get request per raid day roster every 500ms
-    setTimeout(searchPlayerHelper, 500, name, msg, i, nameRaids);
+    setTimeout(searchPlayerHelper, 500, name, msg, i, signUpIndices);
   }
 
-  for (var day in nameRaids) {
-    string += day;
-  }
+  // for (var day in nameRaids) {
+  //   string += day;
+  // }
 
   string += "```\n";
 
   msg.channel.send(string);
 }
 
-function searchPlayerHelper(name,msg, index, nameRaids) {
-  //set the range for the get request
-  sheetRange = raidDays[index] + "!A3:A29";
+function searchPlayerHelper(name,msg, index, signUpIndices) {
+  //set the range for the get request from the signup page
+  sheetRange = "Sign Up!" + signUpIndices[index] + "3:"+ signUpIndices[index] + "26";
 
   //one get request per raid day roster
   sheets.spreadsheets.values.get({
@@ -338,7 +339,7 @@ function searchPlayerHelper(name,msg, index, nameRaids) {
     //search the roster for the name
     for (var j = 0; j < response.values.length; j++) {
       //if theyre in the roster they raid on this day
-      if (response.values[j][0] === name) {
+      if (response.values[j][0].toLowerCase().indexOf(name) > -1) {
         //should only print one message
         // nameRaids.push(raidDays[index]);
         // console.log(nameRaids[index]);
@@ -399,7 +400,14 @@ client.on('message', msg => {
   //search for a player in the raid rosters
   if (msg.content.startsWith(prefix + 'search')) {
     if (args[1] != null) {
-      searchPlayerBT(capitalizeFirstLetter(args[1]),msg);
+      //get the 1st word in the name (currently all lowercase)
+      // string = capitalizeFirstLetter(args[1]);
+      string = args[1].toLowerCase();
+      //add on any extra words (ie 'The RNGsus')
+      for (var i = 2; i < args.length; i++) {
+        string += " " + args[i].toLowerCase();
+      }
+      searchPlayerBT(string,msg);
     } else {
       msg.channel.send("Did you gimme a name? If lost, use '>raid help'.");
     }
