@@ -61,8 +61,8 @@ function btRoster(day, msg) {
         string += "\n" + response.values[i][0] + '========';
       } else {
         //add names to the string
-        string2 = "\n" + (i-Math.floor(i/7)) + ". " + response.values[i][0]
-          + "-" + response.values[i][3];
+        string2 = "\n" + (i-Math.floor(i/7)) + ". " + checkValid(response.values[i][0])
+          + "-" + checkValid(response.values[i][3]);
         //try to line up spacing for the party traits
         // while (string2.length < 23) string2 += " ";
         string += string2;
@@ -97,13 +97,13 @@ function venomskyMechs(day, msg) {
     //names, 60 and 30%
     for (var i = 1; i < response.values.length; i++) {
       //handle phase vs add position
-      if (response.values[i][2] == null) {
+      if (i == 0 || i == 5 || i == 11) {
         //phase %
         string += "\n" + response.values[i][0] + "=====";
       } else {
         //add position and PT/names
         string += "\n" + response.values[i][0]
-          + " - " + response.values[i][2];
+          + " - " + checkValid(response.values[i][2]);
       }
     }
     string += "```";
@@ -126,9 +126,9 @@ function nightfallMechs(day, msg) {
     string += "-" + response.values[1][0] + "\n";
     for (var i = 2; i < 5; i++) {
       //string2 is an attempt to line up the spacing
-      string2 = response.values[i][0];
+      string2 = checkValid(response.values[i][0]);
       while (string2.length < 11) string2 += " ";
-      string2 += response.values[i][2] + "\n";
+      string2 += checkValid(response.values[i][2]) + "\n";
       //add the party 1 ss people to the string
       string += string2;
     }
@@ -139,13 +139,13 @@ function nightfallMechs(day, msg) {
       string += "ANYBODY\n";
     } else {
       for (var i = 10; i < 13; i++) {
-        string += response.values[i][0] + "  -  " + response.values[i][2] + "\n";
+        string += response.values[i][0] + "  -  " + checkValid(response.values[i][2]) + "\n";
       }
     }
     //outside tanks
     string += response.values[5][0] + "=====\n";
     for (var i = 6; i < 9; i++) {
-      string += response.values[i][0] + "  -  " + response.values[i][2] + "\n";
+      string += response.values[i][2] + "  -  " + checkValid(response.values[i][0]) + "\n";
     }
     string += "```";
     //actually send mssg to channel
@@ -168,30 +168,30 @@ function generalsMechs(day, msg) {
     //red boss line
     var string2 = response.values[1][2] + '=====\n';
     //Rez Roles
-    string += "-Resses: " + response.values[2][0] + ", " + response.values[3][0] + '\n';
-    string2 += '-Resses: ' + response.values[2][2] + ", " + response.values[3][2] + '\n';
+    string += "-Resses: " + checkValid(response.values[2][0]) + ", " + checkValid(response.values[3][0]) + '\n';
+    string2 += '-Resses: ' + checkValid(response.values[2][2]) + ", " + checkValid(response.values[3][2]) + '\n';
     //DPS roles per boss
     string += "-DPS:\n";
     string2 += "-DPS:\n";
     for (var i = 5; i < 15; i+=2) {
       //string3 is temporarily used to maintain uniform spacing
       //blue boss
-      string3 = response.values[i][0];
+      string3 = checkValid(response.values[i][0]);
       while (string3.length < 13) string3 += " ";
-      string3 += response.values[i+1][0] + "\n";
+      string3 += checkValid(response.values[i+1][0]) + "\n";
       string += string3;
       //red boss
-      string3 = response.values[i][2];
+      string3 = checkValid(response.values[i][2]);
       while (string3.length < 13) string3 += " ";
-      string3 += response.values[i+1][2] + "\n";
+      string3 += checkValid(response.values[i+1][2]) + "\n";
       string2 += string3;
     }
     //sacrifices
-    string += "-" + response.values[15][0] + ": " + response.values[16][0] + "\n";
-    string2 += "-" + response.values[15][0] + ": " + response.values[16][2] + "\n";
+    string += "-" + response.values[15][0] + ": " + checkValid(response.values[16][0]) + "\n";
+    string2 += "-" + response.values[15][0] + ": " + checkValid(response.values[16][2]) + "\n";
     //aerial shotcallers
-    string += "-" + response.values[17][0] + ": " + response.values[19][0] + "\n";
-    string2 += "-" + response.values[17][0] + ": " + response.values[18][0] + "\n";
+    string += "-" + response.values[17][0] + ": " + checkValid(response.values[19][0]) + "\n";
+    string2 += "-" + response.values[17][0] + ": " + checkValid(response.values[18][0]) + "\n";
 
 
     //actually send mssg to channel
@@ -219,7 +219,7 @@ function ravenMechs(day, msg) {
       //handle the 8 people per add
       for (var j = 0; j < 8; j++) {
         //string2 handles the 8 people individually
-        string2 = response.values[i+1+Math.floor(j/4)][j%4];
+        string2 = checkValid(response.values[i+1+Math.floor(j/4)][j%4]);
         //adjust to uniform spacing
         while (string2.length < 13) string2 += " ";
         //make a new line after 4 names
@@ -233,9 +233,9 @@ function ravenMechs(day, msg) {
     //86 and 56%
     for (var i = 12; i < 16; i+=3) {
       string += "-" + response.values[i][0] + ' adds\n';
-      string += response.values[i+1][1] + '\n'
-        + response.values[i+2][0] + '\n'
-        + response.values[i+2][2] + '\n'
+      string += checkValid(response.values[i+1][1]) + '\n'
+        + checkValid(response.values[i+2][0]) + '\n'
+        + checkValid(response.values[i+2][2]) + '\n'
     }
     //26% header
     string += "-" + response.values[18][0] + ' adds\n';
@@ -259,12 +259,12 @@ function ravenMechs(day, msg) {
     //Other Roles
     string += "-" + response.values[21][0] + '\n';
     //stack caller
-    string += response.values[22][0] + ': ' + response.values[23][0] + '\n';
+    string += response.values[22][0] + ': ' + checkValid(response.values[23][0]) + '\n';
     //calling boss rotations
-    string += response.values[24][0] + ': ' + response.values[25][0]
-      + ", " + response.values[26][0] + "\n";
+    string += response.values[24][0] + ': ' + checkValid(response.values[25][0])
+      + ", " + checkValid(response.values[26][0]) + "\n";
     //RK TANK
-    string += response.values[27][0] + ': ' + response.values[28][0] + '\n';
+    string += response.values[27][0] + ': ' + checkValid(response.values[28][0]) + '\n';
 
     string += "```";
     //actually send mssg to channel
@@ -352,6 +352,13 @@ function searchPlayerHelper(name,msg, index, signUpIndices) {
 //misc. functions
 function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+function checkValid(name) {
+  if (name == null || name == "") {
+    return "N/A";
+  }
+  return name;
 }
 
 //bot login message
