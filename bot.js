@@ -173,7 +173,7 @@ function generalsMechs(day, msg) {
       string3 += checkValid(response.values[i+1][0]) + "\n";
       string += string3;
       //red boss
-      string3 = checkValid(response.values[i][2]);
+      string3 = checkValid(response.values[i][1]);
       while (string3.length < 13) string3 += " ";
       string3 += checkValid(response.values[i+1][1]) + "\n";
       string2 += string3;
@@ -182,10 +182,10 @@ function generalsMechs(day, msg) {
     string += "-" + response.values[15][0] + ": " + checkValid(response.values[16][0]) + "\n";
     string2 += "-" + response.values[15][0] + ": " + checkValid(response.values[16][1]) + "\n";
     //aerial shotcallers
-    string += "-" + response.values[17][0] + ": " + checkValid(response.values[18][0])
-      + ", " + checkValid(response.values[19][0]) + "\n";
-    string2 += "-" + response.values[17][0] + ": " + checkValid(response.values[18][1])
-      + ", " + checkValid(response.values[19][1]) + "\n";
+    string += "-" + response.values[17][0] + ": " + checkValid(response.values[18][0]) + "\n";
+      // + ", " + checkValid(response.values[19][0]) + "\n";
+    string2 += "-" + response.values[17][0] + ": " + checkValid(response.values[19][0]) + "\n";
+      // + ", " + checkValid(response.values[19][1]) + "\n";
 
     //actually send mssg to channel
     string += string2;
