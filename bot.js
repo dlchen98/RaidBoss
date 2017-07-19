@@ -42,13 +42,17 @@ var keepGoing;
 //day = appropriate raidDay index value
 function btRoster(day, msg) {
   //set the range for the get request
-  sheetRange = day + "!A2:K29";
+  sheetRange = day + "!A2:G29";
   //get the roster data from the appropriate spreadsheet
   return sheets.spreadsheets.values.get({
     spreadsheetId,
     range: sheetRange
   }, (err, response) => {
-    if (err) console.console.error("There was an error");
+    //make sure the spreadsheet isn't missing core values
+    if (response.values.length < 28) {
+      msg.channel.send("Missing roster data. If this is intentional, just type something in the last roster row.\n");
+      return;
+    }
     //raid message header
     string = '```=====' + day + " Raid" + "=====\n";
     // string += '==' + "Name-Class \t ~Buff/Rez/Iframe" + "\n"
@@ -62,21 +66,9 @@ function btRoster(day, msg) {
       } else {
         //add names to the string
         string2 = "\n" + (i-Math.floor(i/7)) + ". " + checkValid(response.values[i][0])
-          + "-" + checkValid(response.values[i][3]);
-        //try to line up spacing for the party traits
-        // while (string2.length < 23) string2 += " ";
+          + "-" + checkValid(response.values[i][2]);
         string += string2;
       }
-      //only print party trait if player has one
-      // for (var j = 5; j < response.values[i].length; j+=2) {
-      //   if (response.values[i][j] != '') {
-      //     if (j == 7) {
-      //       string += "~Heals ";
-      //     } else {
-      //       string += "~" + response.values[i][j] + " ";
-      //     }
-      //   }
-      // }
     }
     string += "```";
     //print the roster to the channel
@@ -86,11 +78,16 @@ function btRoster(day, msg) {
 
 function venomskyMechs(day, msg) {
   //set the range for the get request
-  sheetRange = day + "!A33:E50";
+  sheetRange = day + "!I2:L20";
   return sheets.spreadsheets.values.get({
     spreadsheetId,
     range: sheetRange
   }, (err, response) => {
+    //make sure the spreadsheet isn't missing core values
+    if (response.values.length < 18) {
+      msg.channel.send("Missing positioning data. If this is intentional, just type something in the last add row.\n");
+      return;
+    }
     var string = '```=====' + "First Boss Mechanics" + "=====\n";
     //90% adds
     string += response.values[0][0] + '=====';
@@ -114,11 +111,16 @@ function venomskyMechs(day, msg) {
 
 function nightfallMechs(day, msg) {
   //set the range for the get request
-  sheetRange = day + "!H33:K45";
+  sheetRange = day + "!I23:L27";
   return sheets.spreadsheets.values.get({
     spreadsheetId,
     range: sheetRange
   }, (err, response) => {
+    //make sure the spreadsheet isn't missing core values
+    if (response.values.length < 5) {
+      msg.channel.send("Missing SS data. If this is intentional, just type something in the last roster row.\n");
+      return;
+    }
     var string = '```=====' + "Second Boss Mechanics" + "=====\n";
     //Soul Sep Line
     string += response.values[0][0] + "=====\n";
@@ -132,21 +134,6 @@ function nightfallMechs(day, msg) {
       //add the party 1 ss people to the string
       string += string2;
     }
-    //secondary SS people
-    string += "-" + response.values[9][0] + "\n";
-    //check if people are actually assigned or just anybody works
-    if (response.values[11] == null) {
-      string += "ANYBODY\n";
-    } else {
-      for (var i = 10; i < 13; i++) {
-        string += response.values[i][0] + "  -  " + checkValid(response.values[i][2]) + "\n";
-      }
-    }
-    //outside tanks
-    string += response.values[5][0] + "=====\n";
-    for (var i = 6; i < 9; i++) {
-      string += response.values[i][2] + "  -  " + checkValid(response.values[i][0]) + "\n";
-    }
     string += "```";
     //actually send mssg to channel
     msg.channel.send(string);
@@ -155,21 +142,26 @@ function nightfallMechs(day, msg) {
 
 function generalsMechs(day, msg) {
   //set the range for the get request
-  sheetRange = day + "!N55:Q74";
+  sheetRange = day + "!N2:O21";
   //string1 = blue boss, string2 = red boss
   return sheets.spreadsheets.values.get({
     spreadsheetId,
     range: sheetRange
   }, (err, response) => {
+    //make sure the spreadsheet isn't missing core values
+    if (response.values.length < 19) {
+      msg.channel.send("Missing generals data. If this is intentional, just type something in the second aerial row.\n");
+      return;
+    }
     var string = '```=====' + "Third Boss Mechanics" + "=====\n";
     //boss mechs
     //blue boss line
     string += response.values[1][0] + '=====\n';
     //red boss line
-    var string2 = response.values[1][2] + '=====\n';
+    var string2 = response.values[1][1] + '=====\n';
     //Rez Roles
     string += "-Resses: " + checkValid(response.values[2][0]) + ", " + checkValid(response.values[3][0]) + '\n';
-    string2 += '-Resses: ' + checkValid(response.values[2][2]) + ", " + checkValid(response.values[3][2]) + '\n';
+    string2 += '-Resses: ' + checkValid(response.values[2][1]) + ", " + checkValid(response.values[3][1]) + '\n';
     //DPS roles per boss
     string += "-DPS:\n";
     string2 += "-DPS:\n";
@@ -183,16 +175,17 @@ function generalsMechs(day, msg) {
       //red boss
       string3 = checkValid(response.values[i][2]);
       while (string3.length < 13) string3 += " ";
-      string3 += checkValid(response.values[i+1][2]) + "\n";
+      string3 += checkValid(response.values[i+1][1]) + "\n";
       string2 += string3;
     }
     //sacrifices
     string += "-" + response.values[15][0] + ": " + checkValid(response.values[16][0]) + "\n";
-    string2 += "-" + response.values[15][0] + ": " + checkValid(response.values[16][2]) + "\n";
+    string2 += "-" + response.values[15][0] + ": " + checkValid(response.values[16][1]) + "\n";
     //aerial shotcallers
-    string += "-" + response.values[17][0] + ": " + checkValid(response.values[19][0]) + "\n";
-    string2 += "-" + response.values[17][0] + ": " + checkValid(response.values[18][0]) + "\n";
-
+    string += "-" + response.values[17][0] + ": " + checkValid(response.values[18][0])
+      + ", " + checkValid(response.values[19][0]) + "\n";
+    string2 += "-" + response.values[17][0] + ": " + checkValid(response.values[18][1])
+      + ", " + checkValid(response.values[19][1]) + "\n";
 
     //actually send mssg to channel
     string += string2;
@@ -203,12 +196,17 @@ function generalsMechs(day, msg) {
 
 function ravenMechs(day, msg) {
   //set the range for the get request
-  sheetRange = day + "!N1:Q29";
+  sheetRange = day + "!Q1:T29";
 
   return sheets.spreadsheets.values.get({
     spreadsheetId,
     range: sheetRange
   }, (err, response) => {
+    //make sure the spreadsheet isn't missing core values
+    if (response.values.length < 29) {
+      msg.channel.send("Missing RK data. If this is intentional, just type something in the tank row.\n");
+      return;
+    }
     var string = '```=====' + response.values[0][0] + "=====\n";
     //outer adds
     string += response.values[1][0] + '=====\n';
@@ -259,12 +257,12 @@ function ravenMechs(day, msg) {
     //Other Roles
     string += "-" + response.values[21][0] + '\n';
     //stack caller
-    string += response.values[22][0] + ': ' + checkValid(response.values[23][0]) + '\n';
+    string += response.values[22][0] + ': ' + checkValid(response.values[23]) + '\n';
     //calling boss rotations
-    string += response.values[24][0] + ': ' + checkValid(response.values[25][0])
+    string += response.values[24][0] + ': ' + checkValid(response.values[25])
       + ", " + checkValid(response.values[26][0]) + "\n";
     //RK TANK
-    string += response.values[27][0] + ': ' + checkValid(response.values[28][0]) + '\n';
+    string += response.values[27][0] + ': ' + checkValid(response.values[28]) + '\n';
 
     string += "```";
     //actually send mssg to channel
@@ -334,16 +332,22 @@ function searchPlayerHelper(name,msg, index, signUpIndices) {
     spreadsheetId,
     range: sheetRange
   }, (err, response) => {
-    if (err) console.log(error);
+    //make sure the spreadsheet isn't missing core values
+    if (response.values.length < 24) {
+      msg.channel.send("Missing sign up roster data. If this is intentional, just type something in the last name of " + raidDays[index] + ".\n");
+      return;
+    }
 
     //search the roster for the name
     for (var j = 0; j < response.values.length; j++) {
       //if theyre in the roster they raid on this day
-      if (response.values[j][0].toLowerCase().indexOf(name) > -1) {
-        //should only print one message
-        // nameRaids.push(raidDays[index]);
-        // console.log(nameRaids[index]);
-        msg.channel.send(raidDays[index]);
+      if (response.values[j] != undefined && response.values[j] != "") {
+        if (response.values[j][0].toLowerCase().indexOf(name) > -1) {
+          //should only print one message
+          // nameRaids.push(raidDays[index]);
+          // console.log(nameRaids[index]);
+          msg.channel.send(raidDays[index]);
+        }
       }
     }
   })
