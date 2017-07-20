@@ -155,40 +155,42 @@ function generalsMechs(day, msg) {
     }
     var string = '```=====' + "Third Boss Mechanics" + "=====\n";
     //boss mechs
-    //blue boss line
-    string += response.values[1][0] + '=====\n';
-    //red boss line
-    var string2 = response.values[1][1] + '=====\n';
+    string += response.values[1][0] + '====|' + response.values[1][1] + '====\n'
+
     //Rez Roles
-    string += "-Resses: " + checkValid(response.values[2][0]) + ", " + checkValid(response.values[3][0]) + '\n';
-    string2 += '-Resses: ' + checkValid(response.values[2][1]) + ", " + checkValid(response.values[3][1]) + '\n';
+    string += "-Resses:\n"
+    for (var i = 2; i < 4; i++) {
+      string2 = checkValid(response.values[i][0]);
+      while (string2.length < 13) string2 += " ";
+      string2 += "|" + checkValid(response.values[i][1])  + "\n";
+      string += string2;
+    }
+
     //DPS roles per boss
     string += "-DPS:\n";
-    string2 += "-DPS:\n";
-    for (var i = 5; i < 15; i+=2) {
-      //string3 is temporarily used to maintain uniform spacing
-      //blue boss
-      string3 = checkValid(response.values[i][0]);
-      while (string3.length < 13) string3 += " ";
-      string3 += checkValid(response.values[i+1][0]) + "\n";
-      string += string3;
-      //red boss
-      string3 = checkValid(response.values[i][1]);
-      while (string3.length < 13) string3 += " ";
-      string3 += checkValid(response.values[i+1][1]) + "\n";
-      string2 += string3;
+    for (var i = 5; i < 15; i++) {
+      string2 = checkValid(response.values[i][0]);
+      while (string2.length < 13) string2 += " ";
+      string2 += "|" + checkValid(response.values[i][1]) + "\n";
+      string += string2;
     }
     //sacrifices
-    string += "-" + response.values[15][0] + ": " + checkValid(response.values[16][0]) + "\n";
-    string2 += "-" + response.values[15][0] + ": " + checkValid(response.values[16][1]) + "\n";
+    string += "-" + response.values[15][0] + ":\n";
+    string2 = checkValid(response.values[16][0]);
+    while (string2.length < 13) string2 += " ";
+    string2 += "|" + checkValid(response.values[16][1]) + "\n";
+    string += string2;
+
     //aerial shotcallers
-    string += "-" + response.values[17][0] + ": " + checkValid(response.values[18][0]) + "\n";
-      // + ", " + checkValid(response.values[19][0]) + "\n";
-    string2 += "-" + response.values[17][0] + ": " + checkValid(response.values[19][0]) + "\n";
-      // + ", " + checkValid(response.values[19][1]) + "\n";
+    string += "-" + response.values[17][0] + ":\n";
+    for (var i = 18; i < 20; i++) {
+      string2 = checkValid(response.values[i][0]);
+      while (string2.length < 13) string2 += " ";
+      string2 += "|" + checkValid(response.values[i][1]) + "\n";
+      string += string2;
+    }
 
     //actually send mssg to channel
-    string += string2;
     string += "```";
     msg.channel.send(string);
   })
