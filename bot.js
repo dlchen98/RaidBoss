@@ -303,40 +303,56 @@ function btRosterList(raidDays,msg) {
 }
 
 //general raid functions
-function searchPlayerBT(name, msg) {
+async function searchPlayerBT(name, msg) {
   //start the return message
   string = "```" + name + "'s BT raid day(s):\n";
   //column indices for the signup sheet
   var signUpIndices = ["A", "F", "K", "P"];
-  // var nameRaids = [];
+  var foundDay = false;
 
   //iterate through all the raid days
   for (var i = 0; i < raidDays.length; i++) {
     //one get request per raid day roster every 500ms
-    setTimeout(searchPlayerHelper, 500, name, msg, i, signUpIndices);
+    // setTimeout(searchPlayerHelper, 500, name, msg, i, signUpIndices);
+
+    //save the found raidDay/empty string
+    string3 = await searchPlayerHelper(name, msg, i, signUpIndices);
+    //set to true if a raidDay is found
+    if (string3 != "") {
+      foundDay = true;
+      //add the raidDay
+      string += string3;
+    }
   }
 
-  // for (var day in nameRaids) {
-  //   string += day;
-  // }
-
   string += "```\n";
+  //print message in discord
+  if (foundDay) {
+    //raid found
+    msg.channel.send(string);
+  } else {
+    //different message if no raid found
+    msg.channel.send("I couldn't find a raid for " + name + ".");
+  }
 
-  msg.channel.send(string);
 }
 
-function searchPlayerHelper(name,msg, index, signUpIndices) {
+async function searchPlayerHelper(name,msg, index, signUpIndices) {
   //set the range for the get request from the signup page
   sheetRange = "Sign Up!" + signUpIndices[index] + "3:"+ signUpIndices[index] + "26";
+
+  //save the raidDay for the person
+  string2 = "";
 
   //one get request per raid day roster
   sheets.spreadsheets.values.get({
     spreadsheetId,
     range: sheetRange
   }, (err, response) => {
-    //make sure the spreadsheet isn't missing core values
-    if (response.values.length < 24) {
-      msg.channel.send("Missing sign up roster data. If this is intentional, just type something in the last name of " + raidDays[index] + ".\n");
+    if (err) console.log(err);
+    //make sure the spreadsheet isn't missing core roles
+    if (response.values.length < 16) {
+      msg.channel.send("Missing critical rolls on sign up. If this is intentional, just type something in any dps spot of " + raidDays[index] + ".\n");
       return;
     }
 
@@ -346,13 +362,19 @@ function searchPlayerHelper(name,msg, index, signUpIndices) {
       if (response.values[j] != undefined && response.values[j] != "") {
         if (response.values[j][0].toLowerCase().indexOf(name) > -1) {
           //should only print one message
-          // nameRaids.push(raidDays[index]);
-          // console.log(nameRaids[index]);
-          msg.channel.send(raidDays[index]);
+          // msg.channel.send(raidDays[index]);
+          //save string2 to the person's raidDay
+          string2 = raidDays[index];
         }
       }
     }
-  })
+  });
+  //return the raidDay, or an empty string if no matches
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve(string2);
+    }, 500);
+  });
 }
 
 //misc. functions
