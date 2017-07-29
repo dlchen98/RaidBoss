@@ -339,7 +339,7 @@ async function searchPlayerBT(name, msg) {
 
 async function searchPlayerHelper(name,msg, index, signUpIndices) {
   //set the range for the get request from the signup page
-  sheetRange = "Sign Up!" + signUpIndices[index] + "3:"+ signUpIndices[index] + "26";
+  sheetRange = "BT Sign Up!" + signUpIndices[index] + "3:"+ signUpIndices[index] + "26";
 
   //save the raidDay for the person
   string2 = "";
