@@ -24,9 +24,12 @@ const auth = new google.auth.JWT(
 );
 google.options({auth});
 
-//TODO do i need to return the get request?
-
+//access Skybreak Spire/Black Tower raid functions
 var btFunctions = require("./btFunctions.js");
+//access Temple of Eluvium raid functions
+var vtFunctions = require("./vtFunctions.js");
+//access general misc. functions to help parse get request data
+var misc = require("./miscFunctions.js");
 
 //prefix for bot commands
 const prefix = ">raid ";
@@ -36,8 +39,10 @@ var string2;
 var string3;
 //store the range of cells to get
 var sheetRange;
-//possible raid days
-var raidDays = ["Wednesday", "Friday", "Saturday", "Sunday"];
+//BT Raid Days
+var raidDays = ["Wednesday", "Thursday", "Early Fri.", "Late Fri."];
+//VT raidsv
+var vtRaids = ["VT1","VT2","VT3"];
 
 //bot login message
 client.on('ready', () => {
@@ -82,6 +87,23 @@ client.on('message', msg => {
         msg.reply("Don't think that Spire option exists. If lost, use '>raid help'.");
     }
   } else
+  //VT related thingymajigies
+  if (args[0].startsWith("vt") && args[1] != null) {
+    //decide which raid day it is
+    switch(args[0]) {
+      case "vt1":
+        vtFunctions.vtRaidOptions(args[1], vtRaids[0],msg, sheets, spreadsheetId);
+        break;
+      case "vt2":
+        vtFunctions.vtRaidOptions(args[1], vtRaids[1],msg, sheets, spreadsheetId);
+        break;
+      case "vt3":
+        vtFunctions.vtRaidOptions(args[1], vtRaids[2],msg, sheets, spreadsheetId);
+        break;
+      default:
+        msg.reply("Don't think that Temple option exists. If lost, use '>raid help'.");
+    }
+  } else
   //search for a player in the raid rosters
   if (msg.content.startsWith(prefix + 'search')) {
     if (args[1] != null) {
@@ -99,68 +121,7 @@ client.on('message', msg => {
   } else
   //reply with list of possible instructions
   if (msg.content.startsWith(prefix + 'help')) {
-    //build the beginning of the PM of possible instructions
-    string = "```Raid Boss Commands:\n"
-      + "Please use \">raid\" before any command.\n\n";
-    //Handle BT Raid instructions
-    string += "Black Tower/Skybreak Spire - Format: <raid#> <extra argugment>\n"
-      + "\t<raid#>: 'bt1' = Wednesday, 'bt2' = Friday, 'bt3' = Saturday, 'bt4' = Sunday\n";
-    //arrays to hold individual BT raid commands
-    var btArgs = ["roster", "1", "2", "3", "4"];
-    var btArgDescriptions = ["list of all raiders\n",
-        "roles for Venomsky Drake\n",
-        "roles for Nightfall Imperators\n",
-        "roles for Generals\n",
-        "roles for Raven King\n",]
-    for (var i = 0; i < btArgs.length; i++) {
-      string2 = "\t" + btArgs[i];
-      while (string2.length < 10) {
-        string2 += " ";
-      }
-      string2 += btArgDescriptions[i];
-      string += string2;
-    }
-
-    //arrays to hold general BT raid commands
-    var btGeneralArgs = ["rosters"];
-    var btGeneralDescriptions = ["display all BT raid rosters\n"];
-
-    //example for people
-    string += "\tex. '>raid bt1 4' => Wednesday RK Mechs\n"
-    //miscellaneous commands for all raids or something
-    string += "  Misc - Format: bt <extra argument>\n";
-    for (var i = 0; i < btGeneralArgs.length; i++) {
-      string2 = "\t" + btGeneralArgs[i];
-      while (string2.length < 10) {
-        string2 += " ";
-      }
-      string2 += btGeneralDescriptions[i];
-      string += string2;
-    }
-    //example
-    string += "\tex. '>raid bt rosters' => all BT raid rosters\n";
-
-    //arrays to hold general commands
-    var generalArgs = ['search'];
-    var generalDescriptions = ['find raid day for a char (not case-sensitive)\n'];
-
-    string += "General Commands - Format: <command> <extra arg>\n"
-
-    for (var i = 0; i < generalArgs.length; i++) {
-      string2 = "\t" + generalArgs[i];
-      while (string2.length < 10) {
-        string2 += " ";
-      }
-      string2 += generalDescriptions[i];
-      string += string2;
-    }
-    //example
-    string += "\tex. '>raid search XScarlyt' => Scar's raid day(s)\n";
-
-    //TODO: FUTURE INSTRUCTION GUIDE HERE
-
-    string += "```";
-    msg.channel.send(string);
+    misc.cmdListHelp(msg,string,string2);
   }else {
     msg.reply("I don't follow. If lost, use '>raid help'.")
   }
