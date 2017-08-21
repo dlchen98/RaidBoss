@@ -31,7 +31,7 @@ module.exports = {
 
   btRoster(day, msg, sheets, spreadsheetId) {
     //set the range for the get request
-    sheetRange = day + "!A2:G29";
+    sheetRange = day + "!A2:C29";
     //get the roster data from the appropriate spreadsheet
     return sheets.spreadsheets.values.get({
       spreadsheetId,
@@ -39,7 +39,7 @@ module.exports = {
     }, (err, response) => {
       //make sure the spreadsheet isn't missing core values (allow <= 3 buyers per 24m raid)
       if (response.values.length < 25) {
-        msg.channel.send(day + " has less than 23 names. If this is intentional, just type something in the last roster row.\n");
+        msg.channel.send(day + " has less than 21 names. If this is intentional, just type something in the last roster row.\n");
         return;
       }
       //raid message header
@@ -67,23 +67,21 @@ module.exports = {
 
   venomskyMechs(day, msg, sheets, spreadsheetId) {
     //set the range for the get request
-    sheetRange = day + "!I2:L20";
+    sheetRange = day + "!I2:L16";
     return sheets.spreadsheets.values.get({
       spreadsheetId,
       range: sheetRange
     }, (err, response) => {
       //make sure the spreadsheet isn't missing core values
-      if (response.values.length < 18) {
+      if (response.values.length < 14) {
         msg.channel.send("Missing positioning data. If this is intentional, just type something in the last add row.\n");
         return;
       }
-      var string = '```=====' + "First Boss Mechanics" + "=====\n";
-      //90% adds
-      string += response.values[0][0] + '=====';
-      //names, 60 and 30%
+      var string = '```=====' + "First Boss Mechanics" + "=====";
+
+      //various add phases
       for (var i = 1; i < response.values.length; i++) {
-        //handle phase vs add position
-        if (i == 0 || i == 5 || i == 11) {
+        if (i % 5 == 0) {
           //phase %
           string += "\n" + response.values[i][0] + "=====";
         } else {
@@ -92,6 +90,7 @@ module.exports = {
             + " - " + misc.checkValid(response.values[i][2]);
         }
       }
+
       string += "```";
       //actually send mssg to channel
       msg.channel.send(string);
@@ -100,7 +99,7 @@ module.exports = {
 
   nightfallMechs(day, msg, sheets, spreadsheetId) {
     //set the range for the get request
-    sheetRange = day + "!I23:L27";
+    sheetRange = day + "!I20:L24";
     return sheets.spreadsheets.values.get({
       spreadsheetId,
       range: sheetRange
@@ -131,47 +130,32 @@ module.exports = {
 
   generalsMechs(day, msg, sheets, spreadsheetId) {
     //set the range for the get request
-    sheetRange = day + "!N2:O21";
+    sheetRange = day + "!N3:O18";
     return sheets.spreadsheets.values.get({
       spreadsheetId,
       range: sheetRange
     }, (err, response) => {
       //make sure the spreadsheet isn't missing core values (can miss one row of aerial callers)
-      if (response.values.length < 19) {
+      if (response.values.length < 15) {
         msg.channel.send("Missing generals data. If this is intentional, just type something in an aerial shotcaller row.\n");
         return;
       }
       var string = '```=====' + "Third Boss Mechanics" + "=====\n";
-      //boss mechs
-      string += response.values[1][0] + '====|' + response.values[1][1] + '====\n'
-
-      //Rez Roles
-      string += "-Resses:\n"
-      for (var i = 2; i < 4; i++) {
-        string2 = misc.checkValid(response.values[i][0]);
-        while (string2.length < 13) string2 += " ";
-        string2 += "|" + misc.checkValid(response.values[i][1])  + "\n";
-        string += string2;
-      }
+      //boss mechs header
+      string += response.values[0][0] + '====|' + response.values[0][1] + '====\n'
 
       //DPS roles per boss
       string += "-DPS:\n";
-      for (var i = 5; i < 15; i++) {
+      for (var i = 1; i < 13; i++) {
         string2 = misc.checkValid(response.values[i][0]);
         while (string2.length < 13) string2 += " ";
         string2 += "|" + misc.checkValid(response.values[i][1]) + "\n";
         string += string2;
       }
-      //sacrifices
-      string += "-" + response.values[15][0] + ":\n";
-      string2 = misc.checkValid(response.values[16][0]);
-      while (string2.length < 13) string2 += " ";
-      string2 += "|" + misc.checkValid(response.values[16][1]) + "\n";
-      string += string2;
 
       //aerial shotcallers
-      string += "-" + response.values[17][0] + ":\n";
-      for (var i = 18; i < response.values.length; i++) {
+      string += "-" + response.values[13][0] + ":\n";
+      for (var i = 14; i < response.values.length; i++) {
         string2 = misc.checkValid(response.values[i][0]);
         while (string2.length < 13) string2 += " ";
         string2 += "|" + misc.checkValid(response.values[i][1]) + "\n";
@@ -186,21 +170,21 @@ module.exports = {
 
   ravenMechs(day, msg, sheets, spreadsheetId) {
     //set the range for the get request
-    sheetRange = day + "!Q1:T29";
+    sheetRange = day + "!Q1:T26";
 
     return sheets.spreadsheets.values.get({
       spreadsheetId,
       range: sheetRange
     }, (err, response) => {
       //make sure the spreadsheet isn't missing core values
-      if (response.values.length < 29) {
+      if (response.values.length < 26) {
         msg.channel.send("Missing RK data. If this is intentional, just type something in the tank row.\n");
         return;
       }
       var string = '```=====' + response.values[0][0] + "=====\n";
       //outer adds
       string += response.values[1][0] + '=====\n';
-      //86,56,26%s
+      //86,56,26% outside adds
       for (var i = 2; i < 11; i+=3) {
         //% add header
         string += "-" + response.values[i][0] + '\n';
@@ -216,25 +200,25 @@ module.exports = {
           string += string2;
         }
       }
-      //innner adds
+      //innner ss adds
       string += response.values[11][0] + '=====\n';
-      //86 and 56%
-      for (var i = 12; i < 16; i+=3) {
+      //86% (56% got removed)
+      for (var i = 12; i < 13; i+=3) {
         string += "-" + response.values[i][0] + ' adds\n';
         string += misc.checkValid(response.values[i+1][1]) + '\n'
           + misc.checkValid(response.values[i+2][0]) + '\n'
           + misc.checkValid(response.values[i+2][2]) + '\n'
       }
       //26% header
-      string += "-" + response.values[18][0] + ' adds\n';
+      string += "-" + response.values[15][0] + ' adds\n';
       //print the (up to) 6 names of 26% people
       for (var i = 0; i < 8; i++) {
         //check if cell is empty
-        if (response.values[19+Math.floor(i/4)][i%4] == null) {
+        if (response.values[16+Math.floor(i/4)][i%4] == null) {
           //do nothing
         } else {
           //string2 is the individual name
-          string2 = response.values[19+Math.floor(i/4)][i%4];
+          string2 = response.values[16+Math.floor(i/4)][i%4];
           //apply uniform spacing
           while (string2.length < 13) string2 += " ";
           //create a new line after the 4th name
@@ -245,14 +229,14 @@ module.exports = {
       }
       string += "\n";
       //Other Roles
-      string += "-" + response.values[21][0] + '\n';
+      string += "-" + response.values[18][0] + '\n';
       //stack caller
-      string += response.values[22][0] + ': ' + misc.checkValid(response.values[23]) + '\n';
+      string += response.values[19][0] + ': ' + misc.checkValid(response.values[20]) + '\n';
       //calling boss rotations
-      string += response.values[24][0] + ': ' + misc.checkValid(response.values[25])
-        + ", " + misc.checkValid(response.values[26][0]) + "\n";
+      string += response.values[21][0] + ': ' + misc.checkValid(response.values[22])
+        + ", " + misc.checkValid(response.values[23][0]) + "\n";
       //RK TANK
-      string += response.values[27][0] + ': ' + misc.checkValid(response.values[28]) + '\n';
+      string += response.values[24][0] + ': ' + misc.checkValid(response.values[25]) + '\n';
 
       string += "```";
       //actually send mssg to channel
@@ -268,6 +252,7 @@ module.exports = {
   },
 
   async searchPlayerBT(name, msg, sheets, spreadsheetId, raidDays) {
+
     //start the return message
     string = "```" + name + "'s BT raid day(s):\n";
     //column indices for the signup sheet
